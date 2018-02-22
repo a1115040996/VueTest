@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			.user{
+				width: 600px;
+				border: 4px solid gold;
+			}
+		</style>
+	</head>
+	<body>
+		<template id="app">
+			<ul class="user">
+				<li><span>姓名： </span> <i id="name">{{msg.name}}</i></li>
+				<li><span>年龄： </span><i id="old">{{msg.old}}</i></li>
+				<li><span>地址： </span><i id="address">{{msg.address}}</i></li>
+				<li><span>id： </span><i id="user_id">{{msg.user_id}}</i></li>
+				<li class="del" style="width: 300px;height: 100px;background: yellowgreen;cursor: pointer;">删除</li>
+				<br /><br />
+			</ul>
+		</template>
+		
+		<div id="user_wrapper">
+		</div>
+	</body>
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function(){
+			getUsers(function(data){
+				for (var i=0;len = data.length,i<len;i++) {
+					createUserListCard(data[i]);
+				}
+			});
+		});
+		
+		function createUserListCard(data){
+			User = Vue.extend({
+				template:'#app',
+				data:function(){
+					return{
+						msg:{
+							name:'',
+							old:'',
+							address:'',
+							user_id:'',
+						}
+					}
+				},
+				created:function(){
+					this.msg.name = data['name'];
+					this.msg.old = data['age'];
+					this.msg.address = data['address'];
+					this.msg.user_id = data['id'];
+				},
+				mounted:function(){
+					$(this.$el).find("li.del").click(function(){
+						$(this).parent('ul').remove();
+					});
+				},
+			});
+			
+			var userCard =  $("<div class='userCard'></div>");
+			$("body").append(userCard);
+			(new User()).$mount('.userCard');
+		}
+		
+		function getUsers(callback){
+			$.ajax({
+				type:"get",
+				url:"http://127.0.0.1:8888",
+				async:true,
+				success:function(data){
+					callback(data);
+				},
+			});
+		}
+	</script>
+</html>

@@ -7,6 +7,69 @@
 			.user{
 				width: 600px;
 				border: 4px solid gold;
+				position: relative;
+				padding-top: 30px;
+			}
+			.user>.del{
+				text-align: center;
+				line-height: 60px;
+				width: 150px;
+				height: 60px;
+				background: yellowgreen;
+				cursor: pointer;
+				font-size: 22px;
+				color: white;
+				border-radius: 15px;
+				margin: 0 auto;
+				position: absolute;
+				right: 40px;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+			}
+			#createUser{
+				width: 600px;
+				height: 300px;
+				position: fixed;
+				right: 40px;
+				top: 40px;
+				margin: auto;
+				border: 4px solid greenyellow;
+				text-align: center;
+			}
+			#createUser >legend{
+				font-size: 18px;
+			}
+			#createUser>ul{
+				list-style: none;
+				text-align: left;
+				padding-left: 20px;
+			}
+			#createUser>ul>li{
+				margin-bottom: 30px;
+				height: 30px;
+				line-height: 30px;
+				margin-right: 10px;
+			}
+			#createUser>ul>li>span{
+				display: inline-block;
+				width: 100px;
+			}
+			#createUser>#create-btn{
+				width: 100px;
+				height: 60px;
+				line-height: 60px;
+				font-size: 18px;
+				text-align: center;
+				margin: 0 auto;
+				background: skyblue;
+				border-radius: 10px;
+				color: white;
+				cursor: pointer;
+				transition: all .2s;
+			}
+			#createUser>#create-btn:hover{
+				background: orange;
 			}
 		</style>
 	</head>
@@ -17,13 +80,23 @@
 				<li><span>年龄： </span><i id="old">{{msg.old}}</i></li>
 				<li><span>地址： </span><i id="address">{{msg.address}}</i></li>
 				<li><span>id： </span><i id="user_id">{{msg.user_id}}</i></li>
-				<li class="del" style="width: 300px;height: 100px;background: yellowgreen;cursor: pointer;">删除</li>
+				<li class="del">删除</li>
 				<br /><br />
 			</ul>
 		</template>
 		
-		<div id="user_wrapper">
-		</div>
+		<fieldset id="createUser">
+			<legend>创建用户</legend>
+			<ul>
+				<li><span>用户名： </span><input id="create_name" type="text" /></li>
+				<li><span>年龄： </span><input type="text" id="create_age"/></li>
+				<li><span>地址： </span><input type="text" id="create_address"/></li>
+			</ul>
+			<div id="create-btn">
+				创建用户
+			</div>
+		</fieldset>
+		
 	</body>
 	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 	<script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js" type="text/javascript" charset="utf-8"></script>
@@ -31,12 +104,29 @@
 		$(function(){
 			getUsers(function(data){
 				for (var i=0;len = data.length,i<len;i++) {
-					createUserListCard(data[i]);
+					createUserListCardDom(data[i]);
 				}
+			});
+			
+			$("#create-btn").click(function(){
+				createUser({
+					name:$("input#create_name").val(),
+					age:$("input#create_age").val(),
+					address:$("input#create_address").val(),
+				},function(data){
+					console.log(data);
+					if (data['code']==0) {
+						alert("创建用户成功！");
+						createUserListCardDom(data["userMsg"]);
+					}else{
+						alert(JSON.stringify(data));
+					}
+					
+				});
 			});
 		});
 		
-		function createUserListCard(data){
+		function createUserListCardDom(data){
 			User = Vue.extend({
 				template:'#app',
 				data:function(){
@@ -99,6 +189,23 @@
 				success:function(data){
 					callback(data);
 				},
+			});
+		}
+		
+		
+		function createUser(obj,callback){
+			$.ajax({
+				type:"get",
+				url:"http://127.0.0.1:8888/user/createUser",
+				async:true,
+				data:{
+					name:obj["name"],
+					age:parseInt(obj["age"]),
+					address:obj["address"],
+				},
+				success:function(data){
+					callback(data);
+				}
 			});
 		}
 	</script>

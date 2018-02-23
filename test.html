@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<script type="text/javascript">
+			$.ajax({
+				type:"get",
+				url:"http://127.0.0.1:8888/user/createUser",
+				async:true,
+				data:{
+					name:'lisi',
+					age:16,
+					address:'chengdu',
+				},
+				success:function(data){
+					console.log(data);
+				}
+			});
+		</script>
+	</body>
+</html>

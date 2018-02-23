@@ -1,6 +1,12 @@
-
-
 var express = require('express');
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : 'root',
+  database : 'person'
+});
+connection.connect();
 var app = express();
 //设置跨域访问
 app.all('*', function(req, res, next) {
@@ -12,75 +18,25 @@ app.all('*', function(req, res, next) {
     next();
 });
 
-app.get('', function(req, res) {
-	/*var users = [
-		{
-			"zhangsan":{
-				name:'zhangsan',
-				age:'18',
-				address:'prc',
-				id:'101010'
-			}
-		},
-		
-		{
-			"lisi":{
-				name:'lisi',
-				age:'22',
-				address:'uk',
-				id:'181818'
-			}
-		},
-	];*/
-	var users = [
-			{
-				name:'zhan1gsan',
-				age:'18',
-				address:'prc',
-				id:'101010'
-			},
-			{
-				name:'zhan2gsan',
-				age:'18',
-				address:'prc',
-				id:'101010'
-			},
-			
-			{
-				name:'zhang2san',
-				age:'18',
-				address:'prc',
-				id:'101010'
-			},
-			
-			{
-				name:'zhan5gsan',
-				age:'18',
-				address:'prc',
-				id:'101010'
-			},
-		{
-				name:'lisi',
-				age:'22',
-				address:'uk',
-				id:'181818'
-		},
-		
-		{
-				name:'lisi',
-				age:'22',
-				address:'uk',
-				id:'181818'
-		},
-		
-		{
-				name:'lisi',
-				age:'22',
-				address:'uk',
-				id:'181818'
-		},
-	];
-    res.send(users);
+app.get('/user/findUserMsg', function(req, res) {
+	var sql = 'SELECT * FROM PERSON';
+	connection.query(sql,function(err,result){
+		if (err) {
+			resu.send(err);
+		}
+		res.send(JSON.stringify(result));
+	});
 });
+
+app.get('/user/deleteUser', function(req, res) {
+	var sql = 'DELETE FROM PERSON WHERE NAME='+'"'+req.query.name+'"';
+	connection.query(sql,function(err,result){
+		if (err) {
+			res.send(err);
+		}
+		res.send(JSON.stringify({"code":0}));
+	});
+});
+
 app.listen(8888);
 console.log('Listening on port 8888...');

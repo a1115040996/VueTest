@@ -57,7 +57,17 @@
 				},
 				mounted:function(){
 					$(this.$el).find("li.del").click(function(){
-						$(this).parent('ul').remove();
+						console.log("删除");
+						console.log($(this).parent('.user').find("i#name").html());
+						var _this = this;
+						deleteUserByName($(this).parent('.user').find("i#name").html(),function(data){
+							console.log(data['code']==0);
+							if (data['code']==0) {
+								$(_this).parent('ul').remove();
+							}else{
+								alert("删除失败！");
+							}
+						});
 					});
 				},
 			});
@@ -70,8 +80,22 @@
 		function getUsers(callback){
 			$.ajax({
 				type:"get",
-				url:"http://127.0.0.1:8888",
+				url:"http://127.0.0.1:8888/user/findUserMsg",
 				async:true,
+				success:function(data){
+					callback(data);
+				},
+			});
+		}
+		
+		function deleteUserByName(name,callback){
+			$.ajax({
+				type:"get",
+				url:"http://127.0.0.1:8888/user/deleteUser",
+				async:true,
+				data:{
+					'name':name,
+				},
 				success:function(data){
 					callback(data);
 				},
